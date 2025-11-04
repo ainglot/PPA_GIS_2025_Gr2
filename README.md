@@ -25,7 +25,7 @@ Witaj! To repozytorium zawiera dwa skrypty Python (ArcPy) do przetwarzania danyc
 
 ## Autor
 - [Adam Inglot] – GIS Developer.
-- Kontakt: [adam.inglot@pg.edu.pl].
+- Kontakt: [ainglotpg@gmail.com].
 
 ## Licencja
 MIT License – swobodne użycie i modyfikacja.
