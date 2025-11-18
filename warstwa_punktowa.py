@@ -30,12 +30,17 @@ def wstawianie_wspolrzednych(warstwa, lista_wsp):
         for wsp in lista_wsp:
             cursor.insertRow(wsp)
 
-lista_wsp_pkt = odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:100]
+# lista_wsp_pkt = odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:100]
 
-## Tworzenie pustej nowej warstwy
-nowa_warstwa_pkt = "GDA2020_OT_OIPR_P_100pierwszych"
-arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
+# ## Tworzenie pustej nowej warstwy
+# nowa_warstwa_pkt = "GDA2020_OT_OIPR_P_100pierwszych"
+# arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
 
-wstawianie_wspolrzednych(nowa_warstwa_pkt, lista_wsp_pkt)
+# wstawianie_wspolrzednych(nowa_warstwa_pkt, lista_wsp_pkt)
+
+### Przetwarzanie pliku tekstowego do warstwy punktowej
+### https://mostwiedzy.pl/pl/open-research-data/3d-point-cloud-as-a-representation-of-silo-tank,615070441641526-0
+
+
 
 print("KONIEC")
