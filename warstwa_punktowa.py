@@ -26,9 +26,10 @@ def aktualizacja_wspolrzednych(warstwa):
             cursor.updateRow(row)
 
 def wstawianie_wspolrzednych(warstwa, lista_wsp):
-    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y"]) as cursor:
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "SHAPE@Z"]) as cursor:
         for wsp in lista_wsp:
-            cursor.insertRow([wsp[0], wsp[1]])
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow(wsp)
 
 # lista_wsp_pkt = odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:100]
 
@@ -40,17 +41,24 @@ def wstawianie_wspolrzednych(warstwa, lista_wsp):
 
 ### Przetwarzanie pliku tekstowego do warstwy punktowej
 ### https://mostwiedzy.pl/pl/open-research-data/3d-point-cloud-as-a-representation-of-silo-tank,615070441641526-0
-
+dx, dy, dz = 470879, 741121, 0
 # wczytanie wszystkich współrzędnych do listy list
 with open('data.txt', 'r') as f:
-    points = [[float(v) for v in line.split()[:3]] for line in f if line.strip() and not line.startswith('#') and len(line.split()) == 3]
+    points = [
+        [float(v) + dx if i == 0 else 
+         float(v) + dy if i == 1 else 
+         float(v) + dz 
+         for i, v in enumerate(line.split()[:3])]
+        for line in f 
+        if line.strip() and not line.startswith('#') and len(line.split()) == 3
+    ]
 
 # wynik:
 print(points[:20])
 
 ## Tworzenie pustej nowej warstwy
-nowa_warstwa_pkt = "Silos02"
-arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
+nowa_warstwa_pkt = "Silos04"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_punktowa)
 
 wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
 
