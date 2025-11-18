@@ -53,9 +53,9 @@ To repozytorium zawiera trzy skrypty Python (ArcPy) wykorzystywane podczas zaję
 
 ## Autor
 
-- **Adam Inglot** – GIS Developer, student PG  
+- **Adam Inglot** – GIS Developer, adiunkt PG  
 - Kontakt: [ainglotpg@gmail.com](mailto:ainglotpg@gmail.com)  
-- LinkedIn: [linkedin.com/in/adam-inglot](https://linkedin.com/in/adam-inglot)
+- LinkedIn: [linkedin.com/in/adam-inglot](https://linkedin.com/in/adaminglot)
 
 ## Licencja
 
