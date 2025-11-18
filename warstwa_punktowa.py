@@ -8,7 +8,7 @@ def odczytywanie_wspolrzednych_do_listy(warstwa):
     with arcpy.da.SearchCursor(warstwa, ["SHAPE@X", "SHAPE@Y"]) as cursor:
         for row in cursor:
             # print(f'{row[0]}, {row[1]}')
-            lista_wsp.append([row])
+            lista_wsp.append([row[0], row[1]])
     return lista_wsp
 
 print(odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:50])
