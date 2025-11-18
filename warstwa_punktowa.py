@@ -1,6 +1,7 @@
 import arcpy
 from collections import defaultdict
 import numpy as np  # opcjonalnie, ale bardzo przydatne
+import statistics   # wbudowane w Pythonie
 
 # =============================================================================
 # KONFIGURACJA DANYCH WEJŚCIOWYCH
@@ -84,7 +85,11 @@ for x, y, z in points:
 result = []
 for z_start in sorted(layers):
     z_end = z_start + 2
+    xs, ys = zip(*layers[z_start])        # rozpakowujemy osobno x i y
     coords = layers[z_start]
+
+    median_x = statistics.median(xs)
+    median_y = statistics.median(ys)
     avg_x = sum(x for x, y in coords) / len(coords)
     avg_y = sum(y for x, y in coords) / len(coords)
     count = len(coords)
@@ -93,6 +98,8 @@ for z_start in sorted(layers):
         'center_z': (z_start + z_end) / 2,
         'avg_x': avg_x,
         'avg_y': avg_y,
+        'median_x': median_x,
+        'median_y': median_y,
         'count': count
     })
 
@@ -100,11 +107,12 @@ nowe_sr_wsp = []
 # Wydrukuj ładnie
 for r in result:
     print(f"Z: [{r['z_range'][0]:.3f}, {r['z_range'][1]:.3f}) → średnie (x,y) = ({r['avg_x']:.3f}, {r['avg_y']:.3f})  [{r['count']} pkt]")
-    nowe_sr_wsp.append([r['avg_x'], r['avg_y'], r['z_range'][0]+1])
+    # nowe_sr_wsp.append([r['avg_x'], r['avg_y'], r['z_range'][0]+1])
+    nowe_sr_wsp.append([r['median_x'], r['median_y'], r['z_range'][0]+1])
 print(nowe_sr_wsp)
 
 ## Tworzenie pustej nowej warstwy
-nowa_warstwa_pkt = "Silos_sr_01"
+nowa_warstwa_pkt = "Silos_sr_02"
 arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_punktowa)
 
 wstawianie_wspolrzednych(nowa_warstwa_pkt, nowe_sr_wsp)
