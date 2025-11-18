@@ -28,7 +28,7 @@ def aktualizacja_wspolrzednych(warstwa):
 def wstawianie_wspolrzednych(warstwa, lista_wsp):
     with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y"]) as cursor:
         for wsp in lista_wsp:
-            cursor.insertRow(wsp)
+            cursor.insertRow([wsp[0], wsp[1]])
 
 # lista_wsp_pkt = odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:100]
 
@@ -40,6 +40,19 @@ def wstawianie_wspolrzednych(warstwa, lista_wsp):
 
 ### Przetwarzanie pliku tekstowego do warstwy punktowej
 ### https://mostwiedzy.pl/pl/open-research-data/3d-point-cloud-as-a-representation-of-silo-tank,615070441641526-0
+
+# wczytanie wszystkich współrzędnych do listy list
+with open('data.txt', 'r') as f:
+    points = [list(map(float, line.split())) for line in f]
+
+# wynik:
+print(points[:20])
+
+## Tworzenie pustej nowej warstwy
+nowa_warstwa_pkt = "Silos01"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
+
+wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
 
 
 
