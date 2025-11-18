@@ -4,7 +4,7 @@ import arcpy
 # KONFIGURACJA DANYCH WEJŚCIOWYCH
 # =============================================================================
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\PPA_Gr2.gdb"
-warstwa_punktowa = "GDA2020_OT_OIPR_P_COPY"
+warstwa_punktowa = "GDA2020_OT_OIPR_P"
 
 # =============================================================================
 # DEFINIOWAINE FUNKCJI DLA WARSTWY PUNKTOWEJ
@@ -25,7 +25,17 @@ def aktualizacja_wspolrzednych(warstwa):
             row[1] += 100
             cursor.updateRow(row)
 
-# print(odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:50])
-aktualizacja_wspolrzednych(warstwa_punktowa)
+def wstawianie_wspolrzednych(warstwa, lista_wsp):
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y"]) as cursor:
+        for wsp in lista_wsp:
+            cursor.insertRow(wsp)
+
+lista_wsp_pkt = odczytywanie_wspolrzednych_do_listy(warstwa_punktowa)[:100]
+
+## Tworzenie pustej nowej warstwy
+nowa_warstwa_pkt = "GDA2020_OT_OIPR_P_100pierwszych"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
+
+wstawianie_wspolrzednych(nowa_warstwa_pkt, lista_wsp_pkt)
 
 print("KONIEC")
