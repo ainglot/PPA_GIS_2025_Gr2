@@ -43,13 +43,13 @@ def wstawianie_wspolrzednych(warstwa, lista_wsp):
 
 # wczytanie wszystkich współrzędnych do listy list
 with open('data.txt', 'r') as f:
-    points = [list(map(float, line.split())) for line in f]
+    points = [[float(v) for v in line.split()[:3]] for line in f if line.strip() and not line.startswith('#') and len(line.split()) == 3]
 
 # wynik:
 print(points[:20])
 
 ## Tworzenie pustej nowej warstwy
-nowa_warstwa_pkt = "Silos01"
+nowa_warstwa_pkt = "Silos02"
 arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "DISABLED", warstwa_punktowa)
 
 wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
