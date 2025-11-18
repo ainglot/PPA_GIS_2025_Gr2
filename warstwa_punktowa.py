@@ -1,4 +1,6 @@
 import arcpy
+from collections import defaultdict
+import numpy as np  # opcjonalnie, ale bardzo przydatne
 
 # =============================================================================
 # KONFIGURACJA DANYCH WEJŚCIOWYCH
@@ -53,15 +55,49 @@ with open('data.txt', 'r') as f:
         if line.strip() and not line.startswith('#') and len(line.split()) == 3
     ]
 
-# wynik:
-print(points[:20])
+# # wynik:
+# print(points[:20])
 
-## Tworzenie pustej nowej warstwy
-nowa_warstwa_pkt = "Silos04"
-arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_punktowa)
+# ## Tworzenie pustej nowej warstwy
+# nowa_warstwa_pkt = "Silos04"
+# arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_punktowa)
 
-wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
+# wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
 
 
+# Przykład: Twoja lista punktów
+# points = [[x1,y1,z1], [x2,y2,z2], ...]
+
+# 1. Znajdź min i max z
+z_values = [p[2] for p in points]
+min_z = min(z_values)
+max_z = max(z_values)
+
+# 2. Grupowanie co 2 jednostki (przedziały [min_z, min_z+2), [min_z+2, min_z+4), ...)
+layers = defaultdict(list)  # klucz: początek przedziału, wartość: lista [x,y]
+
+for x, y, z in points:
+    layer_start = (z - min_z) // 2 * 2 + min_z   # zaokrągla w dół do wielokrotności 2
+    layers[layer_start].append([x, y])
+
+# 3. Oblicz średnie dla każdego przedziału
+result = []
+for z_start in sorted(layers):
+    z_end = z_start + 2
+    coords = layers[z_start]
+    avg_x = sum(x for x, y in coords) / len(coords)
+    avg_y = sum(y for x, y in coords) / len(coords)
+    count = len(coords)
+    result.append({
+        'z_range': (z_start, z_end),
+        'center_z': (z_start + z_end) / 2,
+        'avg_x': avg_x,
+        'avg_y': avg_y,
+        'count': count
+    })
+
+# Wydrukuj ładnie
+for r in result:
+    print(f"Z: [{r['z_range'][0]:.3f}, {r['z_range'][1]:.3f}) → średnie (x,y) = ({r['avg_x']:.3f}, {r['avg_y']:.3f})  [{r['count']} pkt]")
 
 print("KONIEC")
