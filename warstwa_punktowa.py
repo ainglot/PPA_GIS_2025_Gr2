@@ -96,8 +96,17 @@ for z_start in sorted(layers):
         'count': count
     })
 
+nowe_sr_wsp = []
 # Wydrukuj ładnie
 for r in result:
     print(f"Z: [{r['z_range'][0]:.3f}, {r['z_range'][1]:.3f}) → średnie (x,y) = ({r['avg_x']:.3f}, {r['avg_y']:.3f})  [{r['count']} pkt]")
+    nowe_sr_wsp.append([r['avg_x'], r['avg_y'], r['z_range'][0]+1])
+print(nowe_sr_wsp)
+
+## Tworzenie pustej nowej warstwy
+nowa_warstwa_pkt = "Silos_sr_01"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_punktowa)
+
+wstawianie_wspolrzednych(nowa_warstwa_pkt, nowe_sr_wsp)
 
 print("KONIEC")
