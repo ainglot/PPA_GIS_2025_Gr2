@@ -46,54 +46,50 @@ lista_2020 = odczytywanie_wspolrzednych_linii_do_listy(warstwa_2020)
 
 from collections import defaultdict
 
-def compare_lines_and_tag_points(lista_2014, lista_2020, tolerance=0.001):
+from collections import defaultdict
+
+def compare_points_to_list(lista_2014, lista_2020, tolerance=0.01):
     """
-    Porównuje punkty z dwóch warstw (2014 i 2020) z małą tolerancją na błędy zmiennoprzecinkowe.
-    Zwraca lista_2020 z dodanym atrybutem 'status' do każdego punktu.
+    Zwraca listę wszystkich unikalnych punktów w formacie:
+    [[x, y, 'both'], [x, y, '2020_only'], [x, y, '2014_only'], ...]
     """
+    # Słownik: klucz = zaokrąglone współrzędne, wartość = (oryginalny punkt, zbiór lat)
+    point_dict = {}
     
-    # Słownik: klucz = zaokrąglone współrzędne (x, y), wartość = zbiór lat
-    point_to_years = defaultdict(set)
+    def rounded(p):
+        return (round(p[0] / tolerance) * tolerance,
+                round(p[1] / tolerance) * tolerance)
     
-    def round_point(p, tol=tolerance):
-        return (round(p[0]/tol)*tol, round(p[1]/tol)*tol)  # "grid" co 0.001 m (dostosuj tolerancję)
-    
-    # Zbieramy wszystkie punkty z obu warstw
+    # Przetwarzamy 2014
     for line in lista_2014:
         for point in line:
-            key = round_point(point)
-            point_to_years[key].add(2014)
+            key = rounded(point)
+            if key not in point_dict:
+                point_dict[key] = (point, set())
+            point_dict[key][1].add(2014)  # dodajemy rok
     
+    # Przetwarzamy 2020
     for line in lista_2020:
         for point in line:
-            key = round_point(point)
-            point_to_years[key].add(2020)
+            key = rounded(point)
+            if key not in point_dict:
+                point_dict[key] = (point, set())
+            point_dict[key][1].add(2020)
+            # Aktualizujemy oryginalny punkt (z 2020, jeśli istnieje)
+            point_dict[key] = (point, point_dict[key][1])
     
-    # Teraz tagujemy punkty w lista_2020
-    tagged_2020 = []
-    for line in lista_2020:
-        new_line = []
-        for point in line:
-            key = round_point(point)
-            years = point_to_years[key]
-            
-            if 2014 in years and 2020 in years:
-                status = 'both'
-            elif 2014 in years:
-                status = '2014_only'   # punkt był w 2014, ale nie ma go dokładnie w 2020 (blisko, ale nie identycznie)
-            else:
-                status = '2020_only'
-            
-            # Dodajemy punkt jako dict z atrybutem
-            point_dict = {
-                'x': point[0],
-                'y': point[1],
-                'status': status
-            }
-            new_line.append(point_dict)
-        tagged_2020.append(new_line)
+    # Tworzymy wynikową listę
+    result = []
+    for (x, y), years_set in point_dict.values():
+        if 2014 in years_set and 2020 in years_set:
+            tag = 'both'
+        elif 2014 in years_set:
+            tag = '2014_only'
+        else:
+            tag = '2020_only'
+        result.append([x, y, tag])
     
-    return tagged_2020
+    return result
 
 # print(lista_wsp[-1])
 # print(len(lista_wsp))
@@ -103,6 +99,8 @@ def compare_lines_and_tag_points(lista_2014, lista_2020, tolerance=0.001):
 #     for line in lista_wsp
 # ]
 
+lista_roznic = compare_points_to_list(lista_2014, lista_2020, tolerance=0.01)
+print(lista_roznic)
 # wstawianie_wspolrzednych("Centroidy_SWRS_01", warstwa_liniowa, lista_wsp)
 # wstawianie_wspolrzednych_linii("Linie_SWRS_04", warstwa_liniowa, thinned_lines)
 
