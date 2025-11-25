@@ -25,17 +25,25 @@ def odczytywanie_wspolrzednych_linii_do_listy(warstwa):
     return lista_ob
 lista_wsp = odczytywanie_wspolrzednych_linii_do_listy(warstwa_liniowa)
 
-# def wstawianie_wspolrzednych(nowa_warstwa, uklad_wsp, lista_wsp):
-#     arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa, "POINT", "", "DISABLED", "DISABLED", uklad_wsp)
-#     with arcpy.da.InsertCursor(nowa_warstwa, ["SHAPE@X", "SHAPE@Y"]) as cursor:
-#         for wsp in lista_wsp:
-#             # cursor.insertRow([wsp[0], wsp[1]])
-#             cursor.insertRow(wsp)
+def wstawianie_wspolrzednych_linii(nowa_warstwa, uklad_wsp, lista_obiektow):
+    arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa, "POLYLINE", "", "DISABLED", "DISABLED", uklad_wsp)
+    with arcpy.da.InsertCursor(nowa_warstwa, ["SHAPE@"]) as cursor:
+        pnt = arcpy.Point()
+        array = arcpy.Array()
+        for ob in lista_obiektow:
+            for pkt in ob:
+                pnt.X = pkt[0]
+                pnt.Y = pkt[1]
+                array.add(pnt)
+            pol = arcpy.Polyline(array)
+            array.removeAll()
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow([pol])
 
 print(lista_wsp[-1])
 print(len(lista_wsp))
 
 # wstawianie_wspolrzednych("Centroidy_SWRS_01", warstwa_liniowa, lista_wsp)
-
+wstawianie_wspolrzednych_linii("Linie_SWRS_01", warstwa_liniowa, lista_wsp)
 
 print("KONIEC")
