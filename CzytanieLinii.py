@@ -43,7 +43,9 @@ def wstawianie_wspolrzednych_linii(nowa_warstwa, uklad_wsp, lista_obiektow):
 print(lista_wsp[-1])
 print(len(lista_wsp))
 
+thinned_lines = [line[::2] if len(line) % 2 == 1 else line[::2][:-1] + [line[-1]] for line in lista_wsp]
+
 # wstawianie_wspolrzednych("Centroidy_SWRS_01", warstwa_liniowa, lista_wsp)
-wstawianie_wspolrzednych_linii("Linie_SWRS_01", warstwa_liniowa, lista_wsp)
+wstawianie_wspolrzednych_linii("Linie_SWRS_03", warstwa_liniowa, thinned_lines)
 
 print("KONIEC")
