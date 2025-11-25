@@ -39,7 +39,13 @@ def wstawianie_wspolrzednych_linii(nowa_warstwa, uklad_wsp, lista_obiektow):
             array.removeAll()
             # cursor.insertRow([wsp[0], wsp[1]])
             cursor.insertRow([pol])
-
+def wstawianie_wspolrzednych_punktow(warstwa, uklad_wsp, lista_wsp):
+    arcpy.management.CreateFeatureclass(arcpy.env.workspace, warstwa, "POINT", "", "DISABLED", "DISABLED", uklad_wsp)
+    arcpy.management.AddField(warstwa, "tag", "TEXT")
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "tag"]) as cursor:
+        for wsp in lista_wsp:
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow(wsp)
 
 lista_2014 = odczytywanie_wspolrzednych_linii_do_listy(warstwa_2014)
 lista_2020 = odczytywanie_wspolrzednych_linii_do_listy(warstwa_2020)
@@ -101,6 +107,7 @@ def compare_points_to_list(lista_2014, lista_2020, tolerance=0.01):
 
 lista_roznic = compare_points_to_list(lista_2014, lista_2020, tolerance=0.01)
 print(lista_roznic)
+wstawianie_wspolrzednych_punktow("Punkty_kontrolne_01", warstwa_2020, lista_roznic)
 # wstawianie_wspolrzednych("Centroidy_SWRS_01", warstwa_liniowa, lista_wsp)
 # wstawianie_wspolrzednych_linii("Linie_SWRS_04", warstwa_liniowa, thinned_lines)
 
