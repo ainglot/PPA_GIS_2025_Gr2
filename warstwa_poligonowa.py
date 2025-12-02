@@ -63,13 +63,13 @@ i = 0
 for ob in listaPOLIGONU:
     for part in ob:
         for pkt in part:
-            pkt[0] = (pkt[0] - listaCENTROID[i][0])*2 + listaCENTROID[i][0]
-            pkt[1] = (pkt[1] - listaCENTROID[i][1])*2 + listaCENTROID[i][1]
+            pkt[0] = (pkt[0] - listaCENTROID[i][0])*(0.5+i*0.1) + listaCENTROID[i][0]
+            pkt[1] = (pkt[1] - listaCENTROID[i][1])*(0.5+i*0.1) + listaCENTROID[i][1]
     i += 1
 
 print(listaPOLIGONU)
 print(listaCENTROID)
-NowyBudynek = "Budynki01"
+NowyBudynek = "Budynki02"
 wstawianie_wspolrzednych_poligonu(NowyBudynek, warstwa_poligonowa, listaPOLIGONU)
 
 print("KONIEC")
