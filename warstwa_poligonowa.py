@@ -56,4 +56,7 @@ listaPOLIGONU = odczytywanie_wspolrzednych_poligonu(warstwa_poligonowa)
 
 print(listaPOLIGONU)
 
+NowyBudynek = "Budynek01"
+wstawianie_wspolrzednych_poligonu(NowyBudynek, warstwa_poligonowa, listaPOLIGONU)
+
 print("KONIEC")
