@@ -52,8 +52,6 @@ lista_2020 = odczytywanie_wspolrzednych_linii_do_listy(warstwa_2020)
 
 from collections import defaultdict
 
-from collections import defaultdict
-
 def compare_points_to_list(lista_2014, lista_2020, tolerance=0.01):
     """
     Zwraca listę wszystkich unikalnych punktów w formacie:
