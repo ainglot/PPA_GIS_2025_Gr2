@@ -23,7 +23,7 @@ def odczytywanie_wspolrzednych_poligonu(warstwa):
                 # print(part)
                 lista_pkt = []
                 for pnt in part:
-                    print(pnt)
+                    # print(pnt)
                     if pnt:
                         lista_pkt.append([pnt.X, pnt.Y])
                     else:
@@ -32,6 +32,25 @@ def odczytywanie_wspolrzednych_poligonu(warstwa):
                 list_part.append(lista_pkt)
             lista_ob.append(list_part)
     return lista_ob
+
+def wstawianie_wspolrzednych_poligonu(nowa_warstwa, uklad_wsp, lista_obiektow):
+    arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa, "POLYGON", "", "DISABLED", "DISABLED", uklad_wsp)
+    with arcpy.da.InsertCursor(nowa_warstwa, ["SHAPE@"]) as cursor:
+        pnt = arcpy.Point()
+        part = arcpy.Array()
+        array = arcpy.Array()
+        for ob in lista_obiektow:
+            for cze in ob:
+                for pkt in cze:
+                    pnt.X = pkt[0]
+                    pnt.Y = pkt[1]
+                    part.add(pnt)
+                array.add(part)
+                part.removeAll()
+            pol = arcpy.Polygon(array)
+            array.removeAll()
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow([pol])
 
 listaPOLIGONU = odczytywanie_wspolrzednych_poligonu(warstwa_poligonowa)
 
