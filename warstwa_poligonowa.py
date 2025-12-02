@@ -5,7 +5,7 @@ import arcpy
 # KONFIGURACJA DANYCH WEJŚCIOWYCH
 # =============================================================================
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\PPA_Gr2.gdb"
-warstwa_poligonowa = "Budynek"
+warstwa_poligonowa = "Budynki"
 
 # =============================================================================
 # DEFINIOWAINE FUNKCJI DLA WARSTWY PUNKTOWEJ
@@ -69,7 +69,7 @@ for ob in listaPOLIGONU:
 
 print(listaPOLIGONU)
 print(listaCENTROID)
-NowyBudynek = "Budynek03"
+NowyBudynek = "Budynki01"
 wstawianie_wspolrzednych_poligonu(NowyBudynek, warstwa_poligonowa, listaPOLIGONU)
 
 print("KONIEC")
