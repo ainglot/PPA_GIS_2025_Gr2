@@ -15,9 +15,11 @@ warstwa_poligonowa = "Budynek"
 ## [Poligon1[graniece[pkt1[x1, y1], pkt2[x2, y2]....], dziure[pkt1[x1, y1], pkt2[x2, y2]....]], ...]
 def odczytywanie_wspolrzednych_poligonu(warstwa):
     lista_ob = []
-    with arcpy.da.SearchCursor(warstwa, ["SHAPE@"]) as cursor:
+    lista_centr = []
+    with arcpy.da.SearchCursor(warstwa, ["SHAPE@", "SHAPE@XY"]) as cursor:
         for row in cursor:
             # print(row)
+            lista_centr.append(row[1])
             list_part = []
             for part in row[0]:
                 # print(part)
@@ -31,7 +33,7 @@ def odczytywanie_wspolrzednych_poligonu(warstwa):
                         lista_pkt = []
                 list_part.append(lista_pkt)
             lista_ob.append(list_part)
-    return lista_ob
+    return lista_ob, lista_centr
 
 def wstawianie_wspolrzednych_poligonu(nowa_warstwa, uklad_wsp, lista_obiektow):
     arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa, "POLYGON", "", "DISABLED", "DISABLED", uklad_wsp)
@@ -52,11 +54,22 @@ def wstawianie_wspolrzednych_poligonu(nowa_warstwa, uklad_wsp, lista_obiektow):
             # cursor.insertRow([wsp[0], wsp[1]])
             cursor.insertRow([pol])
 
-listaPOLIGONU = odczytywanie_wspolrzednych_poligonu(warstwa_poligonowa)
+listaPOLIGONU, listaCENTROID = odczytywanie_wspolrzednych_poligonu(warstwa_poligonowa)
 
 print(listaPOLIGONU)
+print(listaCENTROID)
 
-NowyBudynek = "Budynek01"
+i = 0
+for ob in listaPOLIGONU:
+    for part in ob:
+        for pkt in part:
+            pkt[0] = (pkt[0] - listaCENTROID[i][0])*2 + listaCENTROID[i][0]
+            pkt[1] = (pkt[1] - listaCENTROID[i][1])*2 + listaCENTROID[i][1]
+    i += 1
+
+print(listaPOLIGONU)
+print(listaCENTROID)
+NowyBudynek = "Budynek03"
 wstawianie_wspolrzednych_poligonu(NowyBudynek, warstwa_poligonowa, listaPOLIGONU)
 
 print("KONIEC")
