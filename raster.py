@@ -19,10 +19,22 @@ print(f"Rozdzielczość przestrzenna: {R.meanCellWidth}")
 # =============================================================================
 LewyDolnyPunkt = arcpy.Point(R.extent.XMin, R.extent.YMin) #przechowanie współrzędnych do lokalizacji rastra wyjściowego
 RozdzielczoscPrzestrzenna = R.meanCellWidth #rozdzielczość przestrzenna rastra
-# NoData = 0 #wartość NoData - w tym rastrze minimalna wartość jest większa niż 0, można tak wykonać
-# R_array = arcpy.RasterToNumPyArray(R, nodata_to_value = NoData)
-# R_array[100:200, 100:200] = 0 # W lewym gónym rógó rastra "wycinamy" prostokąt
-# outR = arcpy.NumPyArrayToRaster(R_array, LewyDolnyPunkt, RozdzielczoscPrzestrzenna, value_to_nodata = NoData)
-# # zapisać nowy raster trzeba podać - dane (R_array), współrzędne lewego dolnego naroża, rozdzielczość przestrzenną i jaką wartość przyjmuje NoData
-# outR.save("NowyRaster")
+NoData = -10 #wartość NoData - w tym rastrze minimalna wartość jest większa niż 0, można tak wykonać
+
+# =============================================================================
+# KONWERSJA RASTRA DO TABLICY NUMPY
+# =============================================================================
+R_array = arcpy.RasterToNumPyArray(R, nodata_to_value = NoData)
+
+# =============================================================================
+# OBLICZENIA NA TABLICY NUMPY
+# =============================================================================
+R_array[100:200, 100:200] = -10 # W lewym gónym rógó rastra "wycinamy" prostokąt
+
+# =============================================================================
+# ZAMIANA TABLICY NUMPY NA RASTER I ZAPISANIE DO NOWEGO PLIKU
+# =============================================================================
+outR = arcpy.NumPyArrayToRaster(R_array, LewyDolnyPunkt, RozdzielczoscPrzestrzenna, value_to_nodata = NoData)
+# zapisać nowy raster trzeba podać - dane (R_array), współrzędne lewego dolnego naroża, rozdzielczość przestrzenną i jaką wartość przyjmuje NoData
+outR.save("NowyRaster01")
 print("KONIEC")
