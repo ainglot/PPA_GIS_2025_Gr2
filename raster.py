@@ -70,7 +70,23 @@ print(f"   Współrzędne środka piksela: X = {X_min:.3f}, Y = {Y_min:.3f} (EPS
 
 print(f"\nMaksimum wartości: {np.nanmax(R_array):.3f}")
 print(f"   Piksel: wiersz = {row_max}, kolumna = {col_max}")
+print(f"   Współrzędne środka piksela: X = {X_max:.3f}, Y = {Y_max:.3f} (EPSG:2180)")
 
+
+# =============================================================================
+# BUDOWA WARSTWY PUNKTOWEJ Z ZAPISEM WSPÓŁRZĘDNYCH MIN I MAX RASTRA JAKO PUNKTÓW
+# =============================================================================
+def wstawianie_wspolrzednych(warstwa, lista_wsp):
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "SHAPE@Z"]) as cursor:
+        for wsp in lista_wsp:
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow(wsp)
+
+arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\PPA_Gr2.gdb"
+nowa_warstwa_pkt = "MinMax_raster"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", 2180)
+points = [[X_min, Y_min, np.nanmin(R_array)], [X_max, Y_max, np.nanmax(R_array)]]
+wstawianie_wspolrzednych(nowa_warstwa_pkt, points)
 
 # =============================================================================
 # OBLICZENIA NA TABLICY NUMPY
