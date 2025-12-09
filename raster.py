@@ -53,10 +53,10 @@ def array_to_map_coordinates(array_row, array_col, lower_left_point, cell_size):
     return X, Y
 
 # Współrzędne minimum
-X_min, Y_min = array_to_map_coordinates(row_min, col_min, lower_left, cell_size)
+X_min, Y_min = array_to_map_coordinates(row_min, col_min, LewyDolnyPunkt, RozdzielczoscPrzestrzenna)
 
 # Współrzędne maksimum
-X_max, Y_max = array_to_map_coordinates(row_max, col_max, lower_left, cell_size)
+X_max, Y_max = array_to_map_coordinates(row_max, col_max, LewyDolnyPunkt, RozdzielczoscPrzestrzenna)
 
 # =============================================================================
 # WYŚWIETLENIE WYNIKÓW
