@@ -27,6 +27,12 @@ def punkt_na_rastrze(punkt, zakres_rastra):
 
     return xmin <= x <= xmax and ymin <= y <= ymax
 
+def wstawianie_wspolrzednych(warstwa, lista_wsp):
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "SHAPE@Z"]) as cursor:
+        for wsp in lista_wsp:
+            # cursor.insertRow([wsp[0], wsp[1]])
+            cursor.insertRow(wsp)
+
 ListaWspLini = odczytywanie_wspolrzednych_linii_do_listy(warstwa_linie_ZTM)
 
 # print(ListaWspLini)
@@ -42,6 +48,7 @@ for RasterIn in rasters:
 
 # print(ListaRastrow)
 
+warstwa_punktow = []
 PKT = [474113.5, 718874.19] # 63,119999
 for ras in ListaRastrow:
     print(punkt_na_rastrze(PKT, ras[1]))
@@ -53,6 +60,14 @@ for ras in ListaRastrow:
         YMAX = ras[1][3]
         dx = int((PKT[0] - XMIN)/cellSIZE)
         dy = int((YMAX - PKT[1])/cellSIZE)
-        print(dx, dy)
+        print(dx, dy, R_array[dy, dx])
+        if not np.isnan(R_array[dy, dx]):
+            warstwa_punktow.append([dx, dy, R_array[dy, dx]])
+
+## Tworzenie pustej nowej warstwy
+arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\Geobaza ZTM\ZTM197.gdb"
+nowa_warstwa_pkt = "PunktNaRastrze01"
+arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_linie_ZTM)
+wstawianie_wspolrzednych(nowa_warstwa_pkt, warstwa_punktow)
 
 print("KONIEC")
