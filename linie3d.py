@@ -28,10 +28,10 @@ def punkt_na_rastrze(punkt, zakres_rastra):
     return xmin <= x <= xmax and ymin <= y <= ymax
 
 def wstawianie_wspolrzednych(warstwa, lista_wsp):
-    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "SHAPE@Z"]) as cursor:
+    with arcpy.da.InsertCursor(warstwa, ["SHAPE@X", "SHAPE@Y", "SHAPE@Z", "coorZ"]) as cursor:
         for wsp in lista_wsp:
             # cursor.insertRow([wsp[0], wsp[1]])
-            cursor.insertRow(wsp)
+            cursor.insertRow([wsp[0], wsp[1], wsp[2], wsp[2]])
 
 ListaWspLini = odczytywanie_wspolrzednych_linii_do_listy(warstwa_linie_ZTM)
 
@@ -62,12 +62,14 @@ for ras in ListaRastrow:
         dy = int((YMAX - PKT[1])/cellSIZE)
         print(dx, dy, R_array[dy, dx])
         if not np.isnan(R_array[dy, dx]):
-            warstwa_punktow.append([dx, dy, R_array[dy, dx]])
+            warstwa_punktow.append([XMIN + dx, YMAX - dy, R_array[dy, dx]])
+            warstwa_punktow.append([XMIN, YMAX, R_array[dy, dx]])
 
 ## Tworzenie pustej nowej warstwy
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\Geobaza ZTM\ZTM197.gdb"
-nowa_warstwa_pkt = "PunktNaRastrze01"
+nowa_warstwa_pkt = "PunktNaRastrze05"
 arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_linie_ZTM)
+arcpy.management.AddField(nowa_warstwa_pkt, "coorZ", "DOUBLE")
 wstawianie_wspolrzednych(nowa_warstwa_pkt, warstwa_punktow)
 
 print("KONIEC")
