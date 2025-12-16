@@ -1,5 +1,5 @@
 import arcpy
-
+import numpy as np
 
 # =============================================================================
 # KONFIGURACJA DANYCH WEJŚCIOWYCH
@@ -17,7 +17,6 @@ def odczytywanie_wspolrzednych_linii_do_listy(warstwa):
             list_pkt = []
             for part in row[0]:
                 for pnt in part:
-                    print(pnt.X, pnt.Y)
                     list_pkt.append([pnt.X, pnt.Y])
             lista_ob.append(list_pkt)
     return lista_ob
@@ -30,7 +29,7 @@ def punkt_na_rastrze(punkt, zakres_rastra):
 
 ListaWspLini = odczytywanie_wspolrzednych_linii_do_listy(warstwa_linie_ZTM)
 
-print(ListaWspLini)
+# print(ListaWspLini)
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\NMT pod ZTM\ZTM197_NMT_TIF"
 rasters = arcpy.ListRasters("*", "TIF")
 
@@ -41,10 +40,19 @@ for RasterIn in rasters:
     print(R.extent.XMin, R.extent.YMin, R.extent.XMax, R.extent.YMax)
     ListaRastrow.append([RasterIn, [R.extent.XMin, R.extent.YMin, R.extent.XMax, R.extent.YMax]])
 
-print(ListaRastrow)
+# print(ListaRastrow)
 
 PKT = [474113.5, 718874.19] # 63,119999
 for ras in ListaRastrow:
-    punkt_na_rastrze(punkt, zakres_rastra)
+    print(punkt_na_rastrze(PKT, ras[1]))
+    if punkt_na_rastrze(PKT, ras[1]):
+        R = arcpy.Raster(ras[0])
+        R_array = arcpy.RasterToNumPyArray(R, nodata_to_value = np.nan)
+        cellSIZE = R.meanCellWidth
+        XMIN = ras[1][0]
+        YMAX = ras[1][3]
+        dx = int((PKT[0] - XMIN)/cellSIZE)
+        dy = int((YMAX - PKT[1])/cellSIZE)
+        print(dx, dy)
 
 print("KONIEC")
