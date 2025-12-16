@@ -27,7 +27,9 @@ ListaWspLini = odczytywanie_wspolrzednych_linii_do_listy(warstwa_linie_ZTM)
 print(ListaWspLini)
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\NMT pod ZTM\ZTM197_NMT_TIF"
 rasters = arcpy.ListRasters("*", "TIF")
-for raster in rasters:
-    print(raster)
+for RasterIn in rasters:
+    print(RasterIn)
+    R = arcpy.Raster(RasterIn)
+    print(R.extent.XMin, R.extent.YMin, R.extent.XMax, R.extent.YMax)
 
 print("KONIEC")
