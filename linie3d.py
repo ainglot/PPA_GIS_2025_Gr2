@@ -50,24 +50,25 @@ for RasterIn in rasters:
 
 warstwa_punktow = []
 PKT = [474113.5, 718874.19] # 63,119999
-for ras in ListaRastrow:
-    print(punkt_na_rastrze(PKT, ras[1]))
-    if punkt_na_rastrze(PKT, ras[1]):
-        R = arcpy.Raster(ras[0])
-        R_array = arcpy.RasterToNumPyArray(R, nodata_to_value = np.nan)
-        cellSIZE = R.meanCellWidth
-        XMIN = ras[1][0]
-        YMAX = ras[1][3]
-        dx = int((PKT[0] - XMIN)/cellSIZE)
-        dy = int((YMAX - PKT[1])/cellSIZE)
-        print(dx, dy, R_array[dy, dx])
-        if not np.isnan(R_array[dy, dx]):
-            warstwa_punktow.append([XMIN + dx, YMAX - dy, R_array[dy, dx]])
-            warstwa_punktow.append([XMIN, YMAX, R_array[dy, dx]])
+for linie in ListaWspLini:
+    for PKT in linie:
+        for ras in ListaRastrow:
+            print(punkt_na_rastrze(PKT, ras[1]))
+            if punkt_na_rastrze(PKT, ras[1]):
+                R = arcpy.Raster(ras[0])
+                R_array = arcpy.RasterToNumPyArray(R, nodata_to_value = np.nan)
+                cellSIZE = R.meanCellWidth
+                XMIN = ras[1][0]
+                YMAX = ras[1][3]
+                dx = int((PKT[0] - XMIN)/cellSIZE)
+                dy = int((YMAX - PKT[1])/cellSIZE)
+                print(dx, dy, R_array[dy, dx])
+                if not np.isnan(R_array[dy, dx]):
+                    warstwa_punktow.append([XMIN + dx, YMAX - dy, R_array[dy, dx]])
 
 ## Tworzenie pustej nowej warstwy
 arcpy.env.workspace = r"D:\GIS\Rok_2025_26\PPA_ArcGIS\Geobaza ZTM\ZTM197.gdb"
-nowa_warstwa_pkt = "PunktNaRastrze05"
+nowa_warstwa_pkt = "PunktNaRastrze10"
 arcpy.management.CreateFeatureclass(arcpy.env.workspace, nowa_warstwa_pkt, "POINT", "", "DISABLED", "ENABLED", warstwa_linie_ZTM)
 arcpy.management.AddField(nowa_warstwa_pkt, "coorZ", "DOUBLE")
 wstawianie_wspolrzednych(nowa_warstwa_pkt, warstwa_punktow)
